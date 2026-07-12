@@ -74,14 +74,15 @@ class GlbBoundary extends Component<
 // dressing in the rustic themes; anything with an explicit glbUrl (hero
 // props) wins, and the clean-tech themes keep their procedural builds.
 // ---------------------------------------------------------------------------
-const STOCK_THEMES = new Set([
+/** Rustic themes share the dungeon-pack set. */
+const RUSTIC_THEMES = new Set([
   'atlantis',
   'pirate',
   'zombie',
   'castle',
   'wonderland',
 ]);
-const STOCK_BASE: Partial<Record<PropKind, string>> = {
+const RUSTIC_BASE: Partial<Record<PropKind, string>> = {
   crate: '/models/stock/box_large.glb',
   barrel: '/models/stock/barrel_large.glb',
   table: '/models/stock/table_long.glb',
@@ -94,11 +95,22 @@ const STOCK_OVERRIDES: Record<string, Partial<Record<PropKind, string>>> = {
   },
   castle: { crate: '/models/stock/crates_stacked.glb' },
   wonderland: { table: '/models/stock/table_small.glb' },
+  // clean-tech themes get their own packs (Space Base / Furniture Bits)
+  space: {
+    crate: '/models/stock/space/cargo_A.gltf',
+    barrel: '/models/stock/space/cargo_B.gltf',
+  },
+  corporate: {
+    shelf: '/models/stock/furniture/shelf_B_large.gltf',
+    table: '/models/stock/furniture/table_low.gltf',
+    plant: '/models/stock/furniture/cactus_medium_A.gltf',
+  },
 };
 
 function stockGlb(kind: PropKind, themeId: string): string | undefined {
-  if (!STOCK_THEMES.has(themeId)) return undefined;
-  return STOCK_OVERRIDES[themeId]?.[kind] ?? STOCK_BASE[kind];
+  const override = STOCK_OVERRIDES[themeId]?.[kind];
+  if (override) return override;
+  return RUSTIC_THEMES.has(themeId) ? RUSTIC_BASE[kind] : undefined;
 }
 
 /**
@@ -117,6 +129,16 @@ export default function Prop(props: BuildProps) {
       <GlbBoundary fallback={fallback}>
         <Suspense fallback={fallback}>
           <GlbProp spec={{ ...props.spec, glbUrl }} size={props.size} />
+          {/* light-emitting kinds keep their glow even as GLB meshes */}
+          {props.spec.kind === 'brazier' && (
+            <pointLight
+              color={props.ctx.palette.keyLight}
+              intensity={6}
+              distance={12}
+              decay={1.9}
+              position={[0, props.size[1] * 0.9, 0]}
+            />
+          )}
         </Suspense>
       </GlbBoundary>
     );

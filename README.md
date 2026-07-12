@@ -116,15 +116,16 @@ Zustand store as the single source of truth.
 Hero props can be swapped from procedural builds to Higgsfield-generated GLB
 meshes via `PropSpec.glbUrl` (files live in `public/models/`).
 
-**Stock CC0 props** — `public/models/stock/` vendors 16 meshes from KayKit's
-Dungeon Remastered pack (CC0, no attribution required; LICENSE.txt included).
-`components/scene/Props.tsx` maps them automatically onto set-dressing prop
-kinds (crates, barrels, tables, shelves) in the rustic themes, with per-theme
-flavor overrides (Pirate gets treasure chests and kegs, Castle gets stacked
-crates). Explicit `glbUrl`s (hero props) always win; Space/Corporate keep
-their clean procedural builds; the Physical reality layer always shows the
-plain procedural set. A few spare meshes (torch, candles, columns, pillar)
-are vendored for future dressing. More CC0 sources: poly.pizza,
+**Stock CC0 props** — `public/models/stock/` vendors meshes from three KayKit
+packs (CC0, no attribution required; LICENSE.txt vendored per pack):
+*Dungeon Remastered* dresses the rustic themes (crates, barrels, tables,
+shelves, with flavor overrides — Pirate gets treasure chests and kegs,
+Castle gets stacked crates, standing torches and columns), *Space Base Bits*
+dresses the Space Station (cargo containers), and *Furniture Bits* dresses
+Corporate (office shelving, low tables, cacti). The mapping lives in
+`components/scene/Props.tsx`; explicit `glbUrl`s (hero props) always win,
+the Physical reality layer always shows the plain procedural set, and any
+failed load degrades to the procedural build. More CC0 sources: poly.pizza,
 quaternius.com, kenney.nl, market.pmnd.rs.
 
 ## MCP tooling used to build this

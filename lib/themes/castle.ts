@@ -171,6 +171,8 @@ export const castle: Theme = {
         { prop: { kind: 'crate' }, position: [7, 0, -7], size: [2, 2, 2], rotationY: -0.2 },
         { prop: { kind: 'statue' }, position: [-7.5, 0, 7.5], size: [2, 6.5, 2], rotationY: 0.6 },
         { prop: { kind: 'brazier' }, position: [4.5, 0, -7.5], size: [1.4, 3, 1.4] },
+        { prop: { kind: 'brazier', glbUrl: '/models/stock/torch_lit.glb' }, position: [4, 0, 7.5], size: [1, 4.5, 1] },
+        { prop: { kind: 'pedestal', glbUrl: '/models/stock/column.glb' }, position: [-4.5, 0, -7.8], size: [1.6, 6.5, 1.6] },
       ],
     },
     {
@@ -337,8 +339,8 @@ export const castle: Theme = {
       ],
       setPieces: [
         { prop: { kind: 'statue' }, position: [8, 0, 5], size: [2.4, 7, 2.4], rotationY: -0.4 },
-        { prop: { kind: 'pedestal' }, position: [-5, 0, 9], size: [1.5, 3.2, 1.5] },
-        { prop: { kind: 'pedestal' }, position: [5, 0, 9], size: [1.5, 3.2, 1.5] },
+        { prop: { kind: 'pedestal', glbUrl: '/models/stock/pillar.glb' }, position: [-5, 0, 9], size: [1.6, 6, 1.6] },
+        { prop: { kind: 'pedestal', glbUrl: '/models/stock/pillar.glb' }, position: [5, 0, 9], size: [1.6, 6, 1.6] },
         { prop: { kind: 'brazier' }, position: [-8, 0, -6], size: [1.4, 3, 1.4] },
         { prop: { kind: 'brazier' }, position: [8, 0, -6], size: [1.4, 3, 1.4] },
       ],
