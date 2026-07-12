@@ -5,6 +5,11 @@
 
 let ctx: AudioContext | null = null;
 
+/** Shared AudioContext (also used by the procedural ambience engine). */
+export function getAudioContext(): AudioContext | null {
+  return getCtx();
+}
+
 function getCtx(): AudioContext | null {
   if (typeof window === 'undefined') return null;
   try {

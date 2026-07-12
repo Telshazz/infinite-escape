@@ -32,6 +32,7 @@ function getParticleSprite(): THREE.Texture | null {
 import type { ChamberId, RigUnit, Theme } from '@/lib/types';
 import { CHAMBERS, rigForChamber } from '@/lib/facility';
 import { useGame } from '@/lib/store';
+import { startAmbience, type AmbienceHandle } from '@/lib/ambience';
 
 const RIG_COLOR = '#3f444a';
 
@@ -242,9 +243,11 @@ function WindStreaks({ chamber, theme, mixed }: { chamber: ChamberId; theme: The
 }
 
 // ---------------------------------------------------------------------------
-// Positional ambient audio — a Higgsfield-generated loop placed at the
-// speaker corners so it pans as the player walks. Fails silent if the
-// file is missing or the browser blocks audio.
+// Ambient audio, two tiers:
+//   1. If public/audio/<theme>-ambient.mp3 exists, it plays as positional
+//      audio at the speaker corners (pans as the player walks).
+//   2. Otherwise the procedural ambience engine (lib/ambience.ts) synthesizes
+//      a themed background bed — no files, no licensing, works offline.
 // ---------------------------------------------------------------------------
 
 function AmbientAudio({ theme, units }: { theme: Theme; units: RigUnit[] }) {
@@ -252,10 +255,18 @@ function AmbientAudio({ theme, units }: { theme: Theme; units: RigUnit[] }) {
   const on = useGame((s) => s.effects.audio);
   const intensity = useGame((s) => s.spec?.effectIntensity ?? 0.5);
   const nodes = useRef<THREE.PositionalAudio[]>([]);
+  const synth = useRef<AmbienceHandle | null>(null);
   const group = useRef<THREE.Group>(null);
 
   useEffect(() => {
-    if (!theme.ambientAudio || !group.current) return;
+    if (!group.current) return;
+    if (!theme.ambientAudio) {
+      synth.current = startAmbience(theme.id);
+      return () => {
+        synth.current?.stop();
+        synth.current = null;
+      };
+    }
     let listener = camera.children.find(
       (c) => c instanceof THREE.AudioListener
     ) as THREE.AudioListener | undefined;
@@ -288,7 +299,8 @@ function AmbientAudio({ theme, units }: { theme: Theme; units: RigUnit[] }) {
       },
       undefined,
       () => {
-        /* no ambient file for this theme — silent */
+        // file missing → fall back to the procedural bed
+        if (!disposed) synth.current = startAmbience(theme.id);
       }
     );
     return () => {
@@ -302,14 +314,16 @@ function AmbientAudio({ theme, units }: { theme: Theme; units: RigUnit[] }) {
         a.removeFromParent();
       });
       nodes.current = [];
+      synth.current?.stop();
+      synth.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme.ambientAudio, camera, units]);
+  }, [theme.ambientAudio, theme.id, camera, units]);
 
   useEffect(() => {
-    nodes.current.forEach((a) =>
-      a.setVolume(on ? 0.25 + intensity * 0.55 : 0)
-    );
+    const vol = on ? 0.25 + intensity * 0.55 : 0;
+    nodes.current.forEach((a) => a.setVolume(vol));
+    synth.current?.setVolume(on ? 0.35 + intensity * 0.4 : 0);
   }, [on, intensity]);
 
   return <group ref={group} />;

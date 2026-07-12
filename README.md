@@ -120,10 +120,33 @@ meshes via `PropSpec.glbUrl` (files live in `public/models/`).
 
 - **Higgsfield MCP** — `generate_image` → `generate_3d` for hero prop GLBs
   (see `public/models/`). Note: Higgsfield's `generate_audio` is
-  text-to-speech only — it cannot produce ambient soundscape loops, so the
-  positional-audio hooks look for files in `public/audio/` and fail silent
-  when absent. Drop any `*-ambient.mp3` loops there to activate them.
+  text-to-speech only — it cannot produce ambient soundscape loops.
 - **Vercel MCP** — deployment to a live shareable URL.
+
+## Ambient audio
+
+Two tiers, automatic:
+
+1. **Recorded loops** — drop a file at `public/audio/<themeId>-ambient.mp3`
+   (e.g. `atlantis-ambient.mp3`) and it plays as positional audio from the
+   speaker rig, panning as the player walks. Good free sources (check each
+   file's license; prefer CC0/"no attribution"):
+   - **Pixabay Sound Effects** (pixabay.com/sound-effects) — free for
+     commercial use, no attribution. Search "underwater ambience",
+     "ship creaking", "spaceship hum", "castle wind", etc.
+   - **Freesound** (freesound.org) — filter by license = Creative Commons 0.
+   - **OpenGameArt** (opengameart.org) — audio section, filter CC0.
+   - **Kenney** (kenney.nl/assets) — CC0 game audio packs.
+   - **Sonniss GDC bundles** (sonniss.com/gameaudiogdc) — royalty-free,
+     commercial OK, huge professional library.
+   - **NASA audio** (nasa.gov/audio-and-ringtones) — public domain, perfect
+     for the Space Station theme.
+   Loop-ready 1–3 minute beds at ~128 kbps mp3 are ideal (a few MB each).
+2. **Procedural fallback** (`lib/ambience.ts`) — when no file exists, a
+   synthesized WebAudio bed plays instead: themed drones + filtered noise +
+   sparse events (bubbles for Atlantis, hull creaks for Pirate, chimes for
+   Wonderland, telemetry pings for Space/Corporate, wind gusts for Castle,
+   distant moans for Zombie). No files, no licensing, works offline.
 
 ## Testing
 
