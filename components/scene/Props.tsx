@@ -6,7 +6,8 @@
 // replace any build via PropSpec.glbUrl.
 // ---------------------------------------------------------------------------
 
-import { useMemo } from 'react';
+import { Component, Suspense, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import * as THREE from 'three';
 import { useGLTF } from '@react-three/drei';
 import type { PropSpec, ThemePalette, Vec3 } from '@/lib/types';
@@ -53,11 +54,39 @@ function GlbProp({ spec, size }: { spec: PropSpec; size: Vec3 }) {
   return <primitive object={cloned} />;
 }
 
+/** GLB fetches can fail (offline, CORS) — degrade to the procedural build. */
+class GlbBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
 /**
  * All positions are floor-anchored: the group's origin sits ON the floor at
  * the prop's position; builds extend upward from y=0.
  */
-export default function Prop({ spec, size, ctx, glow = 0 }: BuildProps) {
+export default function Prop(props: BuildProps) {
+  if (props.spec.glbUrl) {
+    const fallback = <ProceduralProp {...props} />;
+    return (
+      <GlbBoundary fallback={fallback}>
+        <Suspense fallback={fallback}>
+          <GlbProp spec={props.spec} size={props.size} />
+        </Suspense>
+      </GlbBoundary>
+    );
+  }
+  return <ProceduralProp {...props} />;
+}
+
+function ProceduralProp({ spec, size, ctx, glow = 0 }: BuildProps) {
   const pattern = (THEME_PATTERN[ctx.themeId] ?? 'stone') as TexPattern;
   const { palette, mixed } = ctx;
   const [w, h, d] = size;
@@ -91,8 +120,6 @@ export default function Prop({ spec, size, ctx, glow = 0 }: BuildProps) {
       }),
     [palette.secondary, mixed, glow]
   );
-
-  if (spec.glbUrl) return <GlbProp spec={spec} size={size} />;
 
   switch (spec.kind) {
     case 'altar':

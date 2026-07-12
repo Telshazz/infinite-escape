@@ -1,4 +1,5 @@
 import type { Theme } from '../types';
+import { heroGlb } from '../heroAssets';
 
 // ---------------------------------------------------------------------------
 // THE LOST CITY OF ATLANTIS — the vertical-slice theme. LINEAR chain:
@@ -56,7 +57,7 @@ export const atlantis: Theme = {
           name: 'Atlantean Navigation Altar',
           role: 'core',
           mechanic: 'sequence',
-          prop: { kind: 'altar' },
+          prop: { kind: 'altar', glbUrl: heroGlb('atlantis-altar') },
           position: [0, 0, 0.5],
           size: [4.5, 3, 3],
           facing: [0, 0, -1],
@@ -164,7 +165,7 @@ export const atlantis: Theme = {
       setPieces: [
         { prop: { kind: 'crate' }, position: [-7, 0, -7], size: [2, 2, 2], rotationY: 0.3 },
         { prop: { kind: 'crate' }, position: [7.2, 0, 6.2], size: [2, 2, 2], rotationY: -0.2 },
-        { prop: { kind: 'statue' }, position: [-7.5, 0, 7.5], size: [2, 6.5, 2], rotationY: 0.6 },
+        { prop: { kind: 'statue', glbUrl: heroGlb('atlantis-leviathan') }, position: [-7.5, 0, 7.5], size: [2, 6.5, 2], rotationY: 0.6 },
         { prop: { kind: 'brazier' }, position: [4.5, 0, -7.5], size: [1.4, 3, 1.4] },
       ],
     },
@@ -338,7 +339,7 @@ export const atlantis: Theme = {
           name: 'The Leviathan’s Question',
           role: 'extra',
           mechanic: 'riddle',
-          prop: { kind: 'statue' },
+          prop: { kind: 'statue', glbUrl: heroGlb('atlantis-leviathan') },
           position: [-8, 0, 5],
           size: [2.4, 7, 2.4],
           facing: [1, 0, 0],
@@ -366,7 +367,7 @@ export const atlantis: Theme = {
         },
       ],
       setPieces: [
-        { prop: { kind: 'statue' }, position: [8, 0, 5], size: [2.4, 7, 2.4], rotationY: -0.4 },
+        { prop: { kind: 'statue', glbUrl: heroGlb('atlantis-leviathan') }, position: [8, 0, 5], size: [2.4, 7, 2.4], rotationY: -0.4 },
         { prop: { kind: 'pedestal' }, position: [-5, 0, 9], size: [1.5, 3.2, 1.5] },
         { prop: { kind: 'pedestal' }, position: [5, 0, 9], size: [1.5, 3.2, 1.5] },
         { prop: { kind: 'brazier' }, position: [-8, 0, -6], size: [1.4, 3, 1.4] },
