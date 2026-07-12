@@ -68,4 +68,15 @@ export const sfx = {
     tone(587, 0.3, 0.6, 'sine', 0.08);
     tone(784, 0.45, 0.7, 'sine', 0.07);
   },
+  door: () => {
+    tone(98, 0, 0.5, 'triangle', 0.09);
+    tone(147, 0.2, 0.5, 'triangle', 0.07);
+    tone(220, 0.4, 0.4, 'sine', 0.06);
+  },
+  stinger: () => {
+    // short dissonant startle cue (armed only when the spec allows it)
+    tone(880, 0, 0.09, 'sawtooth', 0.05);
+    tone(932, 0.02, 0.12, 'sawtooth', 0.05);
+    tone(110, 0.05, 0.5, 'triangle', 0.09);
+  },
 };

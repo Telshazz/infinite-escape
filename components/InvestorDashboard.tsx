@@ -46,6 +46,53 @@ function RoiBar({
   );
 }
 
+function LayerSplit() {
+  const spec = useGame((s) => s.spec);
+  return (
+    <div className="mt-8 border-t border-gold/20 pt-6">
+      <div className="eyebrow eyebrow-gold mb-1">
+        The Architecture Is the Moat
+      </div>
+      <p className="mb-4 text-xs font-light text-mist/60">
+        One capital build, infinite software inventory. Everything you just
+        played splits cleanly into two layers:
+      </p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="border border-mist/20 p-4">
+          <div className="font-hud text-[0.62rem] uppercase tracking-[0.18em] text-mist/70">
+            Fixed Layer · built once (capex)
+          </div>
+          <ul className="mt-2 space-y-1 text-[0.78rem] font-light text-mist/80">
+            <li>▸ 3 physical chambers, 5 doorways</li>
+            <li>▸ Anchor stations at fixed positions</li>
+            <li>▸ Effects rig: fans, misters, LED channels, speakers</li>
+          </ul>
+        </div>
+        <div className="border border-teal/40 bg-teal/5 p-4">
+          <div className="font-hud text-[0.62rem] uppercase tracking-[0.18em] text-teal-glow">
+            Swappable Layer · regenerated per session (software)
+          </div>
+          <ul className="mt-2 space-y-1 text-[0.78rem] font-light text-mist/85">
+            <li>▸ Theme skin + story + GM voice</li>
+            <li>▸ Room graph shape — linear or non-linear per theme</li>
+            <li>▸ Which of 5 mechanic engines runs at each anchor</li>
+            <li>▸ Difficulty, hints, pacing, effect choreography</li>
+          </ul>
+        </div>
+      </div>
+      {spec && (
+        <p className="mt-4 font-hud text-[0.62rem] uppercase tracking-[0.12em] text-teal/80">
+          This session: {spec.rooms.length} chambers · {spec.totalPuzzles}{' '}
+          puzzles · {spec.band} difficulty ·{' '}
+          {spec.parallelBias
+            ? `parallel stations for ${spec.profile.playerCount} players — the AI paces content to group size`
+            : `sequential pacing for ${spec.profile.playerCount} players — the AI paces content to group size`}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function InvestorDashboard() {
   const open = useGame((s) => s.investorViewOpen);
   const setOpen = useGame((s) => s.setInvestorView);
@@ -93,10 +140,10 @@ export default function InvestorDashboard() {
               {/* Live session facts */}
               <div>
                 <div className="eyebrow mb-2">This Session</div>
-                <StatRow label="Current room" value="20 ft × 20 ft" />
+                <StatRow label="Physical facility" value="3 chambers · fixed" />
                 <StatRow label="Physical rebuild avoided" value="Yes" gold />
-                <StatRow label="Replayable themes" value="Unlimited" gold />
-                <StatRow label="AI puzzle variation" value="Active" />
+                <StatRow label="Replayable themes" value="7 live · unlimited" gold />
+                <StatRow label="Mechanic engines" value="5 reusable" />
                 <StatRow label="Automated Game Master" value="Active" />
                 <StatRow label="Physical effects sync" value="Active" />
               </div>
@@ -173,6 +220,8 @@ export default function InvestorDashboard() {
                 2–5 years.
               </p>
             </div>
+
+            <LayerSplit />
           </motion.div>
         </motion.div>
       )}
