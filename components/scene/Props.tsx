@@ -10,7 +10,7 @@ import { Component, Suspense, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import * as THREE from 'three';
 import { useGLTF } from '@react-three/drei';
-import type { PropSpec, ThemePalette, Vec3 } from '@/lib/types';
+import type { PropKind, PropSpec, ThemePalette, Vec3 } from '@/lib/types';
 import { useSurface } from './materials';
 import { THEME_PATTERN } from './materials';
 import type { TexPattern } from '@/lib/textures';
@@ -68,17 +68,55 @@ class GlbBoundary extends Component<
   }
 }
 
+// ---------------------------------------------------------------------------
+// Stock CC0 meshes (KayKit Dungeon Remastered, vendored in
+// public/models/stock — see LICENSE.txt there). Used automatically for set
+// dressing in the rustic themes; anything with an explicit glbUrl (hero
+// props) wins, and the clean-tech themes keep their procedural builds.
+// ---------------------------------------------------------------------------
+const STOCK_THEMES = new Set([
+  'atlantis',
+  'pirate',
+  'zombie',
+  'castle',
+  'wonderland',
+]);
+const STOCK_BASE: Partial<Record<PropKind, string>> = {
+  crate: '/models/stock/box_large.glb',
+  barrel: '/models/stock/barrel_large.glb',
+  table: '/models/stock/table_long.glb',
+  shelf: '/models/stock/shelf_small.glb',
+};
+const STOCK_OVERRIDES: Record<string, Partial<Record<PropKind, string>>> = {
+  pirate: {
+    crate: '/models/stock/chest_gold.glb',
+    barrel: '/models/stock/keg.glb',
+  },
+  castle: { crate: '/models/stock/crates_stacked.glb' },
+  wonderland: { table: '/models/stock/table_small.glb' },
+};
+
+function stockGlb(kind: PropKind, themeId: string): string | undefined {
+  if (!STOCK_THEMES.has(themeId)) return undefined;
+  return STOCK_OVERRIDES[themeId]?.[kind] ?? STOCK_BASE[kind];
+}
+
 /**
  * All positions are floor-anchored: the group's origin sits ON the floor at
  * the prop's position; builds extend upward from y=0.
  */
 export default function Prop(props: BuildProps) {
-  if (props.spec.glbUrl) {
+  // GLB skins belong to the MIXED-REALITY layer; the physical layer always
+  // shows the plain procedural set — that contrast IS the demo.
+  const glbUrl = props.ctx.mixed
+    ? props.spec.glbUrl ?? stockGlb(props.spec.kind, props.ctx.themeId)
+    : undefined;
+  if (glbUrl) {
     const fallback = <ProceduralProp {...props} />;
     return (
       <GlbBoundary fallback={fallback}>
         <Suspense fallback={fallback}>
-          <GlbProp spec={props.spec} size={props.size} />
+          <GlbProp spec={{ ...props.spec, glbUrl }} size={props.size} />
         </Suspense>
       </GlbBoundary>
     );
