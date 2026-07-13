@@ -162,8 +162,13 @@ Two tiers, automatic:
 
 ## Testing
 
-Automated Playwright flows live outside the repo (session scratchpad) and
-drive: full Atlantis playthrough (all engines via real clicks), door gate
-enforcement, session completion, hint caps, all-7-theme regeneration, and
-spec resolver edge cases (30-min Expert, Family Friendly + Intense, Guided,
-Corporate). `npx tsc --noEmit` and `next build` are clean.
+`scripts/e2e-playthrough.mjs` is a generic completability harness: it plays
+any theme end-to-end at hard difficulty (extras, cross-room dependencies and
+parallel stations all spawned), solving every mechanic through the real
+panel DOM and traversing doors through the store. All 7 themes escape in a
+single continuous run (36 puzzles). Setup instructions are in the file
+header. Additional verified flows: door gate enforcement (locked doors name
+their missing anchors), hint quantity caps, theme regeneration, and spec
+resolver edge cases (30-min Expert room collapse, Family Friendly + Intense
+mode-cap precedence, Guided decoy stripping, Corporate parallel bias).
+`npx tsc --noEmit` and `next build` are clean.
